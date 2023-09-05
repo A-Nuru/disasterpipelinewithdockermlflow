@@ -17,10 +17,26 @@ client = boto3.client('s3',
 
 bucket_name = 'disaster-message'
 
-object_key = 'disaster_messages.csv'
-csv_obj = client.get_object(Bucket=bucket_name, Key=object_key)
-body = csv_obj['Body']
-csv_string = body.read().decode('utf-8')
+object_keys = ['disaster_messages.csv', 'disaster_categories.csv']
 
-df = pd.read_csv(StringIO(csv_string))
-print(df)
+
+def load_data(bucket_name, object_key):
+    
+    '''
+    Args:
+        bucket_name: Name of the S3 bucket that contains data
+        objet_key: Name of the subfolder that contains data
+    Returns:
+        df: Merged dataframe 
+    '''
+
+    csv_obj = client.get_object(Bucket=bucket_name, Key=object_key)
+    body = csv_obj['Body']
+    csv_string = body.read().decode('utf-8')
+
+    df = pd.read_csv(StringIO(csv_string))
+    print(df)
+    return df
+
+
+   
