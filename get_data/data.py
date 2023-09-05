@@ -19,7 +19,9 @@ bucket_name = 'disaster-message'
 
 object_keys = ['disaster_messages.csv', 'disaster_categories.csv']
 
-
+"""
+Module to load, clean and save data
+"""
 def load_data(bucket_name, object_key):
     
     '''
@@ -27,7 +29,7 @@ def load_data(bucket_name, object_key):
         bucket_name: Name of the S3 bucket that contains data
         objet_key: Name of the subfolder that contains data
     Returns:
-        df: Merged dataframe 
+        df: loaded dataframe 
     '''
 
     csv_obj = client.get_object(Bucket=bucket_name, Key=object_key)
@@ -39,4 +41,22 @@ def load_data(bucket_name, object_key):
     return df
 
 
-   
+def merge_data(object_keys):
+    '''
+    Args:
+        objet_keys: List of names (strings) of the subfolder that contains data
+    Returns:
+        df: Merged dataframe 
+    '''
+    df_messages = load_data(bucket_name, object_keys[0])
+    df_categories = load_data(bucket_name, object_keys[1])
+    
+    df = pd.merge(df_messages, df_categories, on='id')
+    print(df)
+    return df
+
+def main():
+    merge_data(object_keys)    
+
+if __name__ == '__main__':
+    main()
