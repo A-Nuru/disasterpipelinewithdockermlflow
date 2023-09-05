@@ -55,8 +55,39 @@ def merge_data(object_keys):
     print(df)
     return df
 
+
+def save_data(df, file_name):
+    
+    '''
+    Upload df_merged into S3
+    Args:
+        df: merged dataset
+        file_name: S3 filename
+    Returns: None 
+        
+    '''
+
+    csv_data = df.to_csv(index=False)
+  
+    try:
+        # Upload the CSV data to the S3 bucket
+        client.put_object(Bucket=bucket_name, Key=file_name, Body=csv_data)
+
+        print(f"DataFrame saved as '{merged_data.csv}' in '{bucket_name}' successfully.")
+    except NoCredentialsError:
+        print("AWS credentials not found or incorrect.")
+    except Exception as e:
+        print(f"An error occurred: {str(e)}")
+
+
+   
 def main():
-    merge_data(object_keys)    
+    df = merge_data(object_keys)  
+    save_data(df, 'merged_data1.csv')
+
+
+
+
 
 if __name__ == '__main__':
     main()
